@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86f4e4b5dde4d71af0b788a7a3752cc3",
+    "content-hash": "16473d023aae84b83981fcb1c3d86c1c",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1837,7 +1837,8 @@
                 }
             ],
             "time": "2022-03-20T21:55:58+00:00"
-
+        },
+        {
             "name": "halaxa/json-machine",
             "version": "1.1.1",
             "source": {
@@ -1894,7 +1895,6 @@
                 }
             ],
             "time": "2022-03-03T11:02:11+00:00"
-
         },
         {
             "name": "laminas/laminas-code",
@@ -8493,5 +8493,4 @@
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"
-
 }
