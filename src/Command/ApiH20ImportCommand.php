@@ -134,7 +134,7 @@ class ApiH20ImportCommand extends Command
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $minDate = $input->getOption('minDate');
-        $maxDate = $input->getOption('MaxDate');
+        $maxDate = $input->getOption('maxDate');
         $helper = $this->getHelper('question');
 
         $lastmonth = date('Y/m/d', strtotime('last month'));
