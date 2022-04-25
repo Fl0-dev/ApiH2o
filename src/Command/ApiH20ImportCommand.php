@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     description: 'Import H20 data from API'
 )]
 class ApiH20ImportCommand extends Command
-
+{
     public string $commandName = 'apiH20:import';
     public string $argumentCity = 'city';
     public string $optionParam = 'param';
