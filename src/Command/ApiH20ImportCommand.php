@@ -43,8 +43,8 @@ class ApiH20ImportCommand extends Command
             ->addOption($optionParam, null, InputOption::VALUE_IS_ARRAY| InputOption::VALUE_OPTIONAL, 'parameters codes to import')
             ->addOption($optionResultsByPage, null, InputOption::VALUE_OPTIONAL, 'number of results by page', 20)
             ->addOption($optionPageNumber, null, InputOption::VALUE_OPTIONAL, 'number of page', 1)
-            ->addOption($optionMinDate, null, InputOption::VALUE_OPTIONAL, 'first date ', '01/01/2022')
-            ->addOption($optionMaxDate, null, InputOption::VALUE_OPTIONAL, 'last date', '01/04/2022')
+            ->addOption($optionMinDate, null, InputOption::VALUE_OPTIONAL, 'first date  aaaa/mm/jj')
+            ->addOption($optionMaxDate, null, InputOption::VALUE_OPTIONAL, 'last date  aaaa/mm/jj')
             ->setHelp(<<<HELP
             This command <info>$commandName</info> is used to import data from the hb'eau API.
             
@@ -55,11 +55,11 @@ class ApiH20ImportCommand extends Command
                 <info>$optionParam</info> : one or more sampling parameter codes to import
                 <info>$optionResultsByPage</info> : the desired number of results per page (default: 20)
                 <info>$optionPageNumber</info> : the desired page number (default: 1)
-                <info>$optionMinDate</info> : a start date of direct debit (default: 01/01/2022)
-                <info>$optionMaxDate</info> : a end date of direct debit (default: 01/04/2022)
+                <info>$optionMinDate</info> : a start date of direct debit (default: one month before today)
+                <info>$optionMaxDate</info> : a end date of direct debit (default: today) 
                 
              EXAMPLE :
-                <info>$commandName paris --param=6455 --param=6489 --resultsByPage=10 --pageNumber=2 --minDate=01/01/2020 --maxDate=01/04/2020</info>
+                <info>$commandName paris --param=6455 --param=6489 --resultsByPage=10 --pageNumber=2 --minDate=2020/01/01 --maxDate=2020/04/01</info>
             HELP)
         ;
     }
