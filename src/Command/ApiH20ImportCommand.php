@@ -20,13 +20,13 @@ class ApiH20ImportCommand extends Command
     {
         // à mettre à la suite de la commande dans le terminal
         $this
-            ->addArgument('city', InputArgument::IS_ARRAY, 'commune par nom ou code')
-            ->addOption('param', null, InputOption::VALUE_IS_ARRAY| InputOption::VALUE_OPTIONAL, 'Paramètres de mesure')
-            ->addOption('resultsByPage', null, InputOption::VALUE_OPTIONAL, 'Paramètres de mesure')
-            ->addOption('param', null, InputOption::VALUE_OPTIONAL, 'Paramètres de mesure')
-            ->addOption('param', null, InputOption::VALUE_OPTIONAL, 'Paramètres de mesure')
-            ->addOption('param', null, InputOption::VALUE_OPTIONAL, 'Paramètres de mesure')
-            ->setHelp('Possibilities description')
+            ->addArgument('city', InputArgument::IS_ARRAY, 'city name or city code to import')
+            ->addOption('param', null, InputOption::VALUE_IS_ARRAY| InputOption::VALUE_OPTIONAL, 'parameters codes to import')
+            ->addOption('resultsByPage', null, InputOption::VALUE_OPTIONAL, 'number of results by page', 20)
+            ->addOption('pageNumber', null, InputOption::VALUE_OPTIONAL, 'number of page', 1)
+            ->addOption('minDate', null, InputOption::VALUE_OPTIONAL, 'first date', '01/01/2022')
+            ->addOption('MaxDate', null, InputOption::VALUE_OPTIONAL, 'last date', '01/04/2022')
+            ->setHelp('Import H20 data from API')
         ;
     }
 
