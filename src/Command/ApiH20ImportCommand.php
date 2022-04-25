@@ -24,9 +24,9 @@ class ApiH20ImportCommand extends Command
             ->addOption('param', null, InputOption::VALUE_IS_ARRAY| InputOption::VALUE_OPTIONAL, 'parameters codes to import')
             ->addOption('resultsByPage', null, InputOption::VALUE_OPTIONAL, 'number of results by page', 20)
             ->addOption('pageNumber', null, InputOption::VALUE_OPTIONAL, 'number of page', 1)
-            ->addOption('minDate', null, InputOption::VALUE_OPTIONAL, 'first date', '01/01/2022')
+            ->addOption('minDate', null, InputOption::VALUE_OPTIONAL, 'first date ', '01/01/2022')
             ->addOption('MaxDate', null, InputOption::VALUE_OPTIONAL, 'last date', '01/04/2022')
-            ->setHelp('Import H20 data from API')
+            ->setHelp('This command allows you to import H20 data from API')
         ;
     }
 

@@ -80,6 +80,9 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.7"
     },
+    "halaxa/json-machine": {
+        "version": "1.1.1"
+    },
     "laminas/laminas-code": {
         "version": "4.5.1"
     },
