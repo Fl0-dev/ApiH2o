@@ -39,8 +39,8 @@ class ApiH20ImportCommand extends Command
         $optionMaxDate = $this->optionMaxDate;
 
         $this
-            ->addArgument($argumentCity, InputArgument::IS_ARRAY,'city name or city code to import')
-            ->addOption($optionParam, null, InputOption::VALUE_IS_ARRAY| InputOption::VALUE_OPTIONAL, 'parameters codes to import')
+            ->addArgument($argumentCity, InputArgument::IS_ARRAY | InputOption::VALUE_OPTIONAL,'city name or city code to import')
+            ->addOption($optionParam, null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'parameters codes to import')
             ->addOption($optionResultsByPage, null, InputOption::VALUE_OPTIONAL, 'number of results by page', 20)
             ->addOption($optionPageNumber, null, InputOption::VALUE_OPTIONAL, 'number of page', 1)
             ->addOption($optionMinDate, null, InputOption::VALUE_OPTIONAL, 'first date  aaaa/mm/jj')
