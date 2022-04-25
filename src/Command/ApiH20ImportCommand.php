@@ -2,12 +2,16 @@
 
 namespace App\Command;
 
+use DateTime;
+use Error;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
@@ -16,6 +20,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class ApiH20ImportCommand extends Command
 {
+
+    protected $minDate;
+    protected $maxDate;
+
     protected function configure(): void
     {
         // à mettre à la suite de la commande dans le terminal
@@ -24,8 +32,8 @@ class ApiH20ImportCommand extends Command
             ->addOption('param', null, InputOption::VALUE_IS_ARRAY| InputOption::VALUE_OPTIONAL, 'parameters codes to import')
             ->addOption('resultsByPage', null, InputOption::VALUE_OPTIONAL, 'number of results by page', 20)
             ->addOption('pageNumber', null, InputOption::VALUE_OPTIONAL, 'number of page', 1)
-            ->addOption('minDate', null, InputOption::VALUE_OPTIONAL, 'first date', '01/01/2022')
-            ->addOption('MaxDate', null, InputOption::VALUE_OPTIONAL, 'last date', '01/04/2022')
+            ->addOption('minDate', null, InputOption::VALUE_OPTIONAL, 'first date format aaaa/mm/jj')
+            ->addOption('MaxDate', null, InputOption::VALUE_OPTIONAL, 'last date format aaaa/mm/jj')
             ->setHelp('Import H20 data from API')
         ;
     }
@@ -49,5 +57,56 @@ class ApiH20ImportCommand extends Command
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
 
         return Command::SUCCESS;
+    }
+
+
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $minDate = $input->getOption('minDate');
+        $maxDate = $input->getOption('MaxDate');
+        $helper = $this->getHelper('question');
+
+        $lastmonth = date('Y/m/d', strtotime('last month'));
+        $now = date('Y/m/d', strtotime('now'));
+  
+        $minQuestion = new Question(sprintf('Provide the starting date [default: %s] : ' , $lastmonth),$lastmonth );
+        $maxQuestion = new Question(sprintf('Provide the ending date [default: %s] : ',$now),$now );
+
+        if(!$minDate)
+        {
+            $minDate = $helper->ask($input,$output,$minQuestion);
+           
+        }
+
+        if(!$maxDate)
+        {
+            $maxDate = $helper->ask($input,$output,$maxQuestion);
+        }
+
+        if (!$this->validateDate($minDate))
+            throw new Error('You gave the wrong format');
+        
+        if (!$this->validateDate($minDate))
+            throw new Error('You gave the wrong format');
+        if ($maxDate > $now)
+            throw new Error("the date is too big");
+
+        $validate = new ConfirmationQuestion(
+            sprintf('You choose to get  %s to %s as date tape Y to confirm : ', $minDate , $maxDate),
+            false,
+            '/^(y|Y)/i'
+        );
+        if ($helper->ask($input,$output,$validate))
+        {
+            $this->minDate = $minDate;
+            $this->maxDate = $maxDate;
+        } else 
+            throw new Error("validation faile");
+    }
+
+    protected function validateDate($date , $format = "Y/m/d" )
+    {
+        $d = DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) == $date;
     }
 }
