@@ -16,24 +16,51 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class ApiH20ImportCommand extends Command
 {
+    public string $commandName = 'apiH20:import';
+    public string $argumentCity = 'city';
+    public string $optionParam = 'param';
+    public string $optionResultsByPage = 'resultsByPage';
+    public string $optionPageNumber = 'pageNumber';
+    public string $optionMinDate = 'minDate';
+    public string $optionMaxDate = 'maxDate';
+
+
+
     protected function configure(): void
     {
         // à mettre à la suite de la commande dans le terminal
+
+        $commandName = $this->commandName;
+        $argumentCity = $this->argumentCity;
+        $optionParam = $this->optionParam;
+        $optionResultsByPage = $this->optionResultsByPage;
+        $optionPageNumber = $this->optionPageNumber;
+        $optionMinDate = $this->optionMinDate;
+        $optionMaxDate = $this->optionMaxDate;
+
         $this
-            ->addArgument('city', InputArgument::IS_ARRAY, 'city name or city code to import')
-            ->addOption('param', null, InputOption::VALUE_IS_ARRAY| InputOption::VALUE_OPTIONAL, 'parameters codes to import')
-            ->addOption('resultsByPage', null, InputOption::VALUE_OPTIONAL, 'number of results by page', 20)
-            ->addOption('pageNumber', null, InputOption::VALUE_OPTIONAL, 'number of page', 1)
-            ->addOption('minDate', null, InputOption::VALUE_OPTIONAL, 'first date ', '01/01/2022')
-            ->addOption('MaxDate', null, InputOption::VALUE_OPTIONAL, 'last date', '01/04/2022')
-            ->setHelp('This command is used to import data from the hb\'eau API.
-It takes one or more city names or codes as parameters
-and to for options:
-  - one or more sampling parameter codes
-  - the desired number of results per page
-  - the desired page number
-  - a start date of direct debit
-  - a end date of direct debit')
+            ->addArgument($argumentCity, InputArgument::IS_ARRAY,'city name or city code to import')
+            ->addOption($optionParam, null, InputOption::VALUE_IS_ARRAY| InputOption::VALUE_OPTIONAL, 'parameters codes to import')
+            ->addOption($optionResultsByPage, null, InputOption::VALUE_OPTIONAL, 'number of results by page', 20)
+            ->addOption($optionPageNumber, null, InputOption::VALUE_OPTIONAL, 'number of page', 1)
+            ->addOption($optionMinDate, null, InputOption::VALUE_OPTIONAL, 'first date ', '01/01/2022')
+            ->addOption($optionMaxDate, null, InputOption::VALUE_OPTIONAL, 'last date', '01/04/2022')
+            ->setHelp(<<<HELP
+            This command <info>$commandName</info> is used to import data from the hb'eau API.
+            
+            PARAMETER :
+                <info>$argumentCity</info> : city name or city code to import
+
+            OPTIONS :
+                <info>$optionParam</info> : one or more sampling parameter codes to import
+                <info>$optionResultsByPage</info> : the desired number of results per page  (default: 20)
+                <info>$optionPageNumber</info> : the desired page number (default: 1)
+                <info>$optionMinDate</info> : a start date of direct debit (default: 01/01/2022)
+                <info>$optionMaxDate</info> : a end date of direct debit (default: 01/04/2022)
+                
+             EXAMPLE :
+                <info>$commandName paris --param=6455 --param=6489 --resultsByPage=10 --pageNumber=2 --minDate=01/01/2020 --maxDate=01/04/2020</info>
+            HELP)
         ;
     }
 
