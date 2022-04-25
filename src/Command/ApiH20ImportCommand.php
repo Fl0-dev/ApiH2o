@@ -3,16 +3,21 @@
 namespace App\Command;
 
 use DateTime;
+
+use GuzzleHttp\Client;
 use Error;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+
 
 #[AsCommand(
     name: 'apiH20:import',
@@ -67,25 +72,62 @@ class ApiH20ImportCommand extends Command
                 <info>$commandName paris --param=6455,6489 --resultsByPage=10 --pageNumber=2 --minDate=2020/01/01 --maxDate=2020/04/01</info>
             HELP)
         ;
+
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        //output : écrire dans le terminal
-        //input : récupérer les données de l'utilisateur
         $io = new SymfonyStyle($input, $output);
-        $arg1 = $input->getArgument('arg1');
 
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
+        //Création du répertoire 
+        $path = dirname(__DIR__, 1) . '/Hubeau/DrinkingWaterQuality/';
+        if (!file_exists($path)) mkdir($path, 0777, true);
+
+        //Argument city
+        if (!empty($input->getArgument('city'))) {
+            foreach ($input->getArgument('city') as $city) {
+                if (preg_match("/^[a-zA-Z-]+$/", $city)) {
+                    $params['nom_commune'][] = strtoupper($city);
+                }
+            }
         }
 
-        if ($input->getOption('option1')) {
-            // ...
+        //Option minDate
+        try {
+            $params['date_min_prelevement'] = (new DateTime($input->getOption('minDate')))->format('Y-m-d H:i:s');
+        } catch (\Throwable $th) {
+            $io->error('Invalid syntax for "minDate" => dd-mm-YYYY or YYYY-mm-dd');
+            exit();
         }
 
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
+        //Option maxDate
+        try {
+            $params['date_max_prelevement'] = (new DateTime($input->getOption('maxDate')))->format('Y-m-d H:i:s');
+        } catch (\Throwable $th) {
+            $io->error('Invalid syntax for "minDate" => dd-mm-YYYY or YYYY-mm-dd');
+            exit();
+        }
+
+        dd($params);
+        $client = new Client();
+        $response = $client->request('GET', 'https://hubeau.eaufrance.fr/api/vbeta/qualite_eau_potable/resultats_dis', [
+            'headers' => ['Accept' => 'application/json'],
+            'form_params' => $params,
+            'http_errors' => false,
+            'verify' => false
+        ]);
+
+        $data = $response->getBody();
+        $filename = 'data_' . date('Y') . '_' . date('m') . '_' . date('d') . '.json';
+
+        $result = file_put_contents($path . $filename, $data);
+
+        if ($result) {
+            $size = filesize($path . $filename);
+            $io->success('You have generated the "' . $filename . '" file with a size of ' . $size . ' bytes');
+        } else {
+            $io->error('An error occurred while creating the file');
+        }
 
         return Command::SUCCESS;
     }
