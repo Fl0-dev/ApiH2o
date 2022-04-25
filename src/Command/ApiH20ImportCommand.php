@@ -53,7 +53,7 @@ class ApiH20ImportCommand extends Command
 
             OPTIONS :
                 <info>$optionParam</info> : one or more sampling parameter codes to import
-                <info>$optionResultsByPage</info> : the desired number of results per page  (default: 20)
+                <info>$optionResultsByPage</info> : the desired number of results per page (default: 20)
                 <info>$optionPageNumber</info> : the desired page number (default: 1)
                 <info>$optionMinDate</info> : a start date of direct debit (default: 01/01/2022)
                 <info>$optionMaxDate</info> : a end date of direct debit (default: 01/04/2022)
