@@ -26,7 +26,14 @@ class ApiH20ImportCommand extends Command
             ->addOption('pageNumber', null, InputOption::VALUE_OPTIONAL, 'number of page', 1)
             ->addOption('minDate', null, InputOption::VALUE_OPTIONAL, 'first date ', '01/01/2022')
             ->addOption('MaxDate', null, InputOption::VALUE_OPTIONAL, 'last date', '01/04/2022')
-            ->setHelp('This command allows you to import H20 data from API')
+            ->setHelp('This command is used to import data from the hb\'eau API.
+It takes one or more city names or codes as parameters
+and to for options:
+  - one or more sampling parameter codes
+  - the desired number of results per page
+  - the desired page number
+  - a start date of direct debit
+  - a end date of direct debit')
         ;
     }
 
