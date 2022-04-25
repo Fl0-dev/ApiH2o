@@ -64,7 +64,7 @@ class ApiH20ImportCommand extends Command
                 <info>$optionMaxDate</info> : a end date of direct debit (default: today) 
                 
              EXAMPLE :
-                <info>$commandName paris --param=6455 --param=6489 --resultsByPage=10 --pageNumber=2 --minDate=2020/01/01 --maxDate=2020/04/01</info>
+                <info>$commandName paris --param=6455,6489 --resultsByPage=10 --pageNumber=2 --minDate=2020/01/01 --maxDate=2020/04/01</info>
             HELP)
         ;
     }
