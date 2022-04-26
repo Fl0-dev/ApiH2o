@@ -93,7 +93,7 @@ class ApiH20ImportCommand extends Command
 
         //Option minDate
         try {
-            $params['date_min_prelevement'] = (new DateTime($input->getOption('minDate')))->format('Y-m-d H:i:s');
+            $params['date_min_prelevement'] = $this->minDate;
         } catch (\Throwable $th) {
             $io->error('Invalid syntax for "minDate" => dd-mm-YYYY or YYYY-mm-dd');
             exit();
@@ -101,7 +101,7 @@ class ApiH20ImportCommand extends Command
 
         //Option maxDate
         try {
-            $params['date_max_prelevement'] = (new DateTime($input->getOption('maxDate')))->format('Y-m-d H:i:s');
+            $params['date_max_prelevement'] = $this->maxDate;
         } catch (\Throwable $th) {
             $io->error('Invalid syntax for "minDate" => dd-mm-YYYY or YYYY-mm-dd');
             exit();
@@ -114,7 +114,7 @@ class ApiH20ImportCommand extends Command
             'http_errors' => false,
             'verify' => false
         ]);
-
+    
         $data = $response->getBody();
         $filename = 'data_' . date('Y') . '_' . date('m') . '_' . date('d') . '.json';
 
@@ -169,8 +169,8 @@ class ApiH20ImportCommand extends Command
         );
         if ($helper->ask($input,$output,$validate))
         {
-            $this->minDate = $minDate;
-            $this->maxDate = $maxDate;
+            $this->minDate = $this->setDate($minDate);
+            $this->maxDate = $this->setDate($maxDate);
         } else 
             throw new Error("validation faile");
     }
@@ -179,5 +179,14 @@ class ApiH20ImportCommand extends Command
     {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
+    }
+
+    protected function setDate(string $date): DateTime
+    {
+
+        $date = new DateTime($date);
+        $date->format('Y/m/d H:i:s');
+        return $date;
+       
     }
 }
