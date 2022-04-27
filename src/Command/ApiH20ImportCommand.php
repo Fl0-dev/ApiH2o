@@ -2,9 +2,11 @@
 
 namespace App\Command;
 
+use App\Entity\DrinkableWaterQuality;
 use App\Service\CallApiService;
 use App\Service\FileService;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -17,7 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -42,16 +43,17 @@ class ApiH20ImportCommand extends Command
 
     private CallApiService $callApiService;
     private FileService $fileService;
-
+    private EntityManagerInterface $entityManager;
     /**
      * @param CallApiService $callApiService
      * @param FileService $fileService
      */
-    public function __construct(CallApiService $callApiService, FileService $fileService)
+    public function __construct(CallApiService $callApiService, FileService $fileService, EntityManagerInterface $entityManager)
     {
+        parent::__construct();
         $this->callApiService = $callApiService;
         $this->fileService = $fileService;
-        parent::__construct();
+        $this->entityManager = $entityManager;
     }
 
     protected function configure(): void
@@ -97,10 +99,17 @@ class ApiH20ImportCommand extends Command
 
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $fields = 'code_departement,nom_departement,code_commune,nom_commune,libelle_parametre,date_prelevement,conclusion_conformite_prelevement';
+        $fields = 'code_departement,nom_departement,code_commune,nom_commune,libelle_parametre,date_prelevement,resultat_numerique,libelle_unite';
 
         //Argument city
         if (!empty($input->getArgument('city'))) {
@@ -113,6 +122,9 @@ class ApiH20ImportCommand extends Command
 
         //Option fields
         $params['fields'] = $fields;
+
+        //option size
+        $params['size'] = 20;
 
         //Option minDate
         try {
@@ -132,13 +144,6 @@ class ApiH20ImportCommand extends Command
 
         $data = $this->callApiService->getData('GET', 'https://hubeau.eaufrance.fr/api/vbeta/qualite_eau_potable/resultats_dis', $params);
 
-        try {
-            $data = $data->toArray();
-        } catch (ClientExceptionInterface | DecodingExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {
-            $io->error('erreur pour mettre en array');
-            exit();
-        }
-        $data = $data['data'];
 
         if ($input->getOption('saveMethod') == 'file') {
             //encode en json
@@ -148,7 +153,23 @@ class ApiH20ImportCommand extends Command
             $io->success($result);
 
         } elseif ($input->getOption('saveMethod') == 'database') {
-            dd('database');
+            //enregistrement en base de données
+            foreach ($data as $key => $value) {
+                $mesure = new DrinkableWaterQuality();
+                $mesure->setNomCommune($value['nom_commune']);
+                $mesure->setCodeCommune($value['code_commune']);
+                $mesure->setLibelleParametre($value['libelle_parametre']);
+                $mesure->setDatePrelevement(new \DateTime($value['date_prelevement']));
+                $mesure->setResultatNumerique($value['resultat_numerique']);
+                $mesure->setLibelleUnite($value['libelle_unite']);
+                $mesure->setCodeDepartement($value['code_departement']);
+                $mesure->setNomDepartement($value['nom_departement']);
+
+                $this->entityManager->persist($mesure);
+                $this->entityManager->flush();
+            }
+
+            $io->success('Data saved in database');
 
         } else {
             $io->error('Invalid syntax for "saveMethod" => file or database');
@@ -158,16 +179,19 @@ class ApiH20ImportCommand extends Command
     }
 
 
+    /**
+     * @throws Exception
+     */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $minDate = $input->getOption('minDate');
         $maxDate = $input->getOption('maxDate');
         $helper = $this->getHelper('question');
 
-        $lastmonth = date('Y/m/d', strtotime('last month'));
+        $lastMonth = date('Y/m/d', strtotime('last month'));
         $now = date('Y/m/d', strtotime('now'));
   
-        $minQuestion = new Question(sprintf('Provide the starting date [default: %s] : ' , $lastmonth),$lastmonth );
+        $minQuestion = new Question(sprintf('Provide the starting date [default: %s] : ' , $lastMonth),$lastMonth );
         $maxQuestion = new Question(sprintf('Provide the ending date [default: %s] : ',$now),$now );
 
         if(!$minDate)
@@ -199,7 +223,7 @@ class ApiH20ImportCommand extends Command
             $this->minDate = $this->setDate($minDate);
             $this->maxDate = $this->setDate($maxDate);
         } else 
-            throw new Error("validation faile");
+            throw new Error("validation failed");
     }
 
     protected function validateDate($date , $format = "Y/m/d" )
@@ -217,6 +241,5 @@ class ApiH20ImportCommand extends Command
         $date = new \DateTime($date);
         $date->format('Y/m/d H:i:s');
         return $date;
-       
     }
 }
