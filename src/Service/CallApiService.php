@@ -33,18 +33,21 @@ class CallApiService
                 'query' => $params,
                 'headers' => ['Accept' => 'application/json', 'Content-Type' => 'application/json'],
             ]);
+
         try {
             $TotalData = $response->toArray();
             $data = $TotalData['data'];
-            while ($TotalData['next'] !== null) {
-                $response = $this->client->request(
-                    $method,
-                    $TotalData['next'],
-                    [
-                        'headers' => ['Accept' => 'application/json', 'Content-Type' => 'application/json'],
-                    ]);
-                $TotalData = $response->toArray();
-                $data = array_merge($data, $TotalData['data']);
+            if(array_key_exists('next', $TotalData)) {
+                while ($TotalData['next'] !== null) {
+                    $response = $this->client->request(
+                        $method,
+                        $TotalData['next'],
+                        [
+                            'headers' => ['Accept' => 'application/json', 'Content-Type' => 'application/json'],
+                        ]);
+                    $TotalData = $response->toArray();
+                    $data = array_merge($data, $TotalData['data']);
+                }
             }
 
         } catch (ClientExceptionInterface | DecodingExceptionInterface | RedirectionExceptionInterface | ServerExceptionInterface | TransportExceptionInterface $e) {

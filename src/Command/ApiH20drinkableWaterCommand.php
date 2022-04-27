@@ -2,11 +2,10 @@
 
 namespace App\Command;
 
-use App\Entity\DrinkableWaterQuality;
 use App\Service\CallApiService;
+use App\Service\DataBaseService;
 use App\Service\FileService;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use Error;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -25,12 +24,12 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 
 #[AsCommand(
-    name: 'apiH20:import',
+    name: 'apiH20:drinkableWater',
     description: 'Import H20 data from API'
 )]
-class ApiH20ImportCommand extends Command
+class ApiH20drinkableWaterCommand extends Command
 {
-    public string $commandName = 'apiH20:import';
+    public string $commandName = 'apiH20:drinkableWater';
     public string $argumentCity = 'city';
     public string $optionParam = 'param';
     public string $optionResultsByPage = 'resultsByPage';
@@ -43,17 +42,18 @@ class ApiH20ImportCommand extends Command
 
     private CallApiService $callApiService;
     private FileService $fileService;
-    private EntityManagerInterface $entityManager;
+    private DataBaseService $dataBaseService;
+
     /**
      * @param CallApiService $callApiService
      * @param FileService $fileService
      */
-    public function __construct(CallApiService $callApiService, FileService $fileService, EntityManagerInterface $entityManager)
+    public function __construct(CallApiService $callApiService, FileService $fileService, DataBaseService $dataBaseService)
     {
         parent::__construct();
         $this->callApiService = $callApiService;
         $this->fileService = $fileService;
-        $this->entityManager = $entityManager;
+        $this->dataBaseService = $dataBaseService;
     }
 
     protected function configure(): void
@@ -96,7 +96,6 @@ class ApiH20ImportCommand extends Command
                 <info>$commandName paris --param=6455,6489 --resultsByPage=10 --pageNumber=2 --minDate=2020/01/01 --maxDate=2020/04/01 --saveMethod=file</info>
             HELP)
         ;
-
     }
 
     /**
@@ -149,25 +148,12 @@ class ApiH20ImportCommand extends Command
             //encode en json
             $data = json_encode($data);
 
-            $result = $this->fileService->createFile($data);
+            $result = $this->fileService->createFile($data, 'drinkableWater');
             $io->success($result);
 
         } elseif ($input->getOption('saveMethod') == 'database') {
             //enregistrement en base de données
-            foreach ($data as $key => $value) {
-                $mesure = new DrinkableWaterQuality();
-                $mesure->setNomCommune($value['nom_commune']);
-                $mesure->setCodeCommune($value['code_commune']);
-                $mesure->setLibelleParametre($value['libelle_parametre']);
-                $mesure->setDatePrelevement(new \DateTime($value['date_prelevement']));
-                $mesure->setResultatNumerique($value['resultat_numerique']);
-                $mesure->setLibelleUnite($value['libelle_unite']);
-                $mesure->setCodeDepartement($value['code_departement']);
-                $mesure->setNomDepartement($value['nom_departement']);
-
-                $this->entityManager->persist($mesure);
-                $this->entityManager->flush();
-            }
+            $this->dataBaseService->saveData($data, 'drinkableWater');
 
             $io->success('Data saved in database');
 
