@@ -37,6 +37,9 @@ class DrinkableWaterQuality
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $libelleUnite;
 
+    #[ORM\Column(type: 'string', length: 100)]
+    private $codeParametre;
+
     public function getCodeDepartement(): ?string
     {
         return $this->codeDepartement;
@@ -129,6 +132,18 @@ class DrinkableWaterQuality
     public function setLibelleUnite(?string $libelleUnite): self
     {
         $this->libelleUnite = $libelleUnite;
+
+        return $this;
+    }
+
+    public function getCodeParametre(): ?string
+    {
+        return $this->codeParametre;
+    }
+
+    public function setCodeParametre(string $codeParametre): self
+    {
+        $this->codeParametre = $codeParametre;
 
         return $this;
     }

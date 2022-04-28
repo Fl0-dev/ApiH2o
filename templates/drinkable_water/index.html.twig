@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}H20{% endblock %}
+
+{% block body %}
+    <section class="conatiner">
+        <h1>Qualité de l'eau potable sur la ville de bouguenais</h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">date du prélèvement</th>
+                <th scope="col">code</th>
+                <th scope="col">paramètre</th>
+                <th scope="col">résultat</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for mesure in mesures %}
+                <tr>
+                    <td>{{ mesure.datePrelevement|format_datetime(locale='fr') }}</td>
+                    <td>{{ mesure.codeParametre | link | raw}}</td>
+                    <td>{{ mesure.libelleParametre }}</td>
+                    <td>{{ mesure.resultatNumerique }}
+                        {{ (mesure.libelleUnite == 'SANS OBJET') ? '' : mesure.libelleUnite }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+{% endblock %}

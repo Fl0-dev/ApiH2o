@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\AirQuality;
 use App\Entity\DrinkableWaterQuality;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class DataBaseService
 {
@@ -15,7 +14,6 @@ class DataBaseService
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-
     }
 
     /**
@@ -29,6 +27,7 @@ class DataBaseService
                 $mesure = new DrinkableWaterQuality();
                 $mesure->setNomCommune($value['nom_commune']);
                 $mesure->setCodeCommune($value['code_commune']);
+                $mesure->setCodeParametre($value['code_parametre']);
                 $mesure->setLibelleParametre($value['libelle_parametre']);
                 $mesure->setDatePrelevement(new \DateTime($value['date_prelevement']));
                 $mesure->setResultatNumerique($value['resultat_numerique']);

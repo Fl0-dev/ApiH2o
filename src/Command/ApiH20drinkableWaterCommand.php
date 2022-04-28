@@ -108,7 +108,7 @@ class ApiH20drinkableWaterCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $fields = 'code_departement,nom_departement,code_commune,nom_commune,libelle_parametre,date_prelevement,resultat_numerique,libelle_unite';
+        $fields = 'code_departement,nom_departement,code_commune,nom_commune,code_parametre,libelle_parametre,date_prelevement,resultat_numerique,libelle_unite';
 
         //Argument city
         if (!empty($input->getArgument('city'))) {
