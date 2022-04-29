@@ -1,5 +1,6 @@
 framework:
     cache:
+#        default_pdo_provider: 'mysql://root:@127.0.0.1:3306/api_h2o?serverVersion=5.7&charset=utf8mb4'
 
         # Unique name of your app: used to compute stable namespaces for cache keys.
         #prefix_seed: your_vendor_name/app_name
@@ -19,5 +20,6 @@ framework:
         #pools:
             #my.dedicated.cache: null
 #        pools:
-#            hubeau_cache:
-#                adapter: cache.adapter.pdo
+#            hubeauCache:
+#                adapter: cache.adapter.doctrine_dbal
+

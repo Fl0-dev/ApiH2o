@@ -14,12 +14,12 @@ use Symfony\Contracts\Cache\ItemInterface;
 class DrinkableWaterController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(DrinkableWaterQualityRepository $drinkableWaterQualityRepository, CacheInterface $hubeauCache, Stopwatch $stopwatch): Response
+    public function index(DrinkableWaterQualityRepository $drinkableWaterQualityRepository, CacheInterface $cache): Response
     {
         //calcule le temps d'exécution
-        $stopwatch->start('execute');
+       // $stopwatch->start('execute');
 
-        $value = $hubeauCache->get('my_cache_key', function (ItemInterface $item) use ($drinkableWaterQualityRepository) {
+        $value = $cache->get('my_cache_key', function (ItemInterface $item) use ($drinkableWaterQualityRepository) {
 
             $item->expiresAfter(3600);
 
@@ -30,7 +30,7 @@ class DrinkableWaterController extends AbstractController
             return $mesures;
         });
 
-        $stopwatch->stop('execute');
+        //$stopwatch->stop('execute');
         return $this->render('drinkable_water/index.html.twig', [
             'mesures' => $value,
         ]);

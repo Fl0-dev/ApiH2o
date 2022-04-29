@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SendingController!{% endblock %}
+
+{% block body %}
+    <section class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Envoi confirmé ✅</h1>
+                <p>Votre message a bien été envoyé à :</p>
+                <p>{{ user.email }}</p>
+
+                <p>Merci de votre confiance.</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}

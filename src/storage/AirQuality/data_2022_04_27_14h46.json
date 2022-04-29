@@ -1,0 +1,1 @@
+{"city":"Paris","state":"Ile-de-France","country":"France","location":{"type":"Point","coordinates":[2.351666,48.859425]},"current":{"pollution":{"ts":"2022-04-27T14:00:00.000Z","aqius":61,"mainus":"p2","aqicn":30,"maincn":"o3"},"weather":{"ts":"2022-04-27T14:00:00.000Z","tp":18,"pr":1021,"hu":48,"ws":6.17,"wd":60,"ic":"01d"}}}
