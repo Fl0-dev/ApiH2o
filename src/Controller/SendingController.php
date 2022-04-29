@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\Something;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -13,8 +14,12 @@ use Symfony\Component\Notifier\Recipient\NoRecipient;
 use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Something("hello");
+ */
 class SendingController extends AbstractController
 {
+
     #[Route('/sending', name: 'app_sending')]
     public function sending(NotifierInterface $notifier): Response
     {
